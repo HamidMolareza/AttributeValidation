@@ -3,14 +3,14 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Reflection;
-using AttributeValidation.ResultDetails;
+using ModelsValidation.ResultDetails;
 using FunctionalUtility.Extensions;
 using FunctionalUtility.ResultDetails;
 using FunctionalUtility.ResultUtility;
 using Microsoft.AspNetCore.Http;
 
-namespace AttributeValidation {
-    public static class AttributeValidation {
+namespace ModelsValidation {
+    public static class Validation {
         private static MethodResult<ParameterInfo[]> ValidateInputs (
                 MethodBase methodBase,
                 IReadOnlyCollection<object?> ? values) => methodBase

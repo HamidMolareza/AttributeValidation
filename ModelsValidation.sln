@@ -3,11 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.26124.0
 MinimumVisualStudioVersion = 15.0.26124.0
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AttributeValidation", "AttributeValidation\AttributeValidation.csproj", "{23CF4CA3-3CB7-4977-AF41-2D1D8527B92A}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ModelsValidation", "ModelsValidation\ModelsValidation.csproj", "{23CF4CA3-3CB7-4977-AF41-2D1D8527B92A}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConsoleManualTest", "ConsoleManualTest\ConsoleManualTest.csproj", "{EFB9B89A-1F94-4EAC-BBFB-619D3EAAC9B1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestAttributeValidation", "TestAttributeValidation\TestAttributeValidation.csproj", "{3B81FFF6-4BA1-4F73-BD9A-4427D5300D56}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestModelsValidation", "TestModelsValidation\TestModelsValidation.csproj", "{3B81FFF6-4BA1-4F73-BD9A-4427D5300D56}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

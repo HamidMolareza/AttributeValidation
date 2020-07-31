@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace AttributeValidation.ResultDetails {
+namespace ModelsValidation.ResultDetails {
     public class ArgumentValidationError : ArgumentError {
         public ArgumentValidationError (List<string> errors, string? title = null,
                 string? message = null, Exception? exception = null):

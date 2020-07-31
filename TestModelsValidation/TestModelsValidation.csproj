@@ -4,6 +4,8 @@
     <TargetFramework>netcoreapp3.1</TargetFramework>
 
     <IsPackable>false</IsPackable>
+
+    <RootNamespace>TestAttributeValidation</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>
@@ -14,7 +16,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\AttributeValidation\AttributeValidation.csproj" />
+    <ProjectReference Include="..\ModelsValidation\ModelsValidation.csproj" />
   </ItemGroup>
 
 </Project>
