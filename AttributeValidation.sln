@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AttributeValidation", "Attr
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConsoleManualTest", "ConsoleManualTest\ConsoleManualTest.csproj", "{EFB9B89A-1F94-4EAC-BBFB-619D3EAAC9B1}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestAttributeValidation", "TestAttributeValidation\TestAttributeValidation.csproj", "{3B81FFF6-4BA1-4F73-BD9A-4427D5300D56}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -44,5 +46,17 @@ Global
 		{EFB9B89A-1F94-4EAC-BBFB-619D3EAAC9B1}.Release|x64.Build.0 = Release|Any CPU
 		{EFB9B89A-1F94-4EAC-BBFB-619D3EAAC9B1}.Release|x86.ActiveCfg = Release|Any CPU
 		{EFB9B89A-1F94-4EAC-BBFB-619D3EAAC9B1}.Release|x86.Build.0 = Release|Any CPU
+		{3B81FFF6-4BA1-4F73-BD9A-4427D5300D56}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3B81FFF6-4BA1-4F73-BD9A-4427D5300D56}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3B81FFF6-4BA1-4F73-BD9A-4427D5300D56}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{3B81FFF6-4BA1-4F73-BD9A-4427D5300D56}.Debug|x64.Build.0 = Debug|Any CPU
+		{3B81FFF6-4BA1-4F73-BD9A-4427D5300D56}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{3B81FFF6-4BA1-4F73-BD9A-4427D5300D56}.Debug|x86.Build.0 = Debug|Any CPU
+		{3B81FFF6-4BA1-4F73-BD9A-4427D5300D56}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3B81FFF6-4BA1-4F73-BD9A-4427D5300D56}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3B81FFF6-4BA1-4F73-BD9A-4427D5300D56}.Release|x64.ActiveCfg = Release|Any CPU
+		{3B81FFF6-4BA1-4F73-BD9A-4427D5300D56}.Release|x64.Build.0 = Release|Any CPU
+		{3B81FFF6-4BA1-4F73-BD9A-4427D5300D56}.Release|x86.ActiveCfg = Release|Any CPU
+		{3B81FFF6-4BA1-4F73-BD9A-4427D5300D56}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
