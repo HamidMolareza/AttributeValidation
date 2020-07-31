@@ -1,7 +1,24 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
+  <PackageId>AttributeValidation</PackageId>
+  <Version>1.0.0</Version>
+  <PackageTags>Validation; Attribute; Model; Validate; Functional</PackageTags>
+  <Authors>Hamid Molareza</Authors>
   </PropertyGroup>
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+  </PropertyGroup>
+
+  <PropertyGroup>
+      <Nullable>enable</Nullable>
+      <WarningsAsErrors>CS8625</WarningsAsErrors>
+      <WarningsAsErrors>CS8603</WarningsAsErrors>
+    </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="FunctionalUtility" Version="1.0.1" />
+  </ItemGroup>
 
 </Project>
