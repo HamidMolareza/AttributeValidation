@@ -3,9 +3,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Reflection;
 using FunctionalUtility.Extensions;
-using FunctionalUtility.ResultDetails;
 using FunctionalUtility.ResultUtility;
-using Microsoft.AspNetCore.Http;
 using ModelsValidation.ResultDetails;
 
 namespace ModelsValidation {
@@ -24,20 +22,17 @@ namespace ModelsValidation {
         private static MethodResult<ParameterInfo[]> InputsMustValid (
                 MethodBase methodBase,
                 IReadOnlyCollection<object?> ? values) =>
-            methodBase.IsNotNull<MethodBase> (new ErrorDetail (StatusCodes.Status400BadRequest,
-                $"{nameof(methodBase)} is required."))
+            methodBase.IsNotNull<MethodBase> (new ArgumentError ($"{nameof(methodBase)} is required."))
             .TryOnSuccess (methodBase.GetParameters)
             .OnSuccessFailWhen (parameters =>
-                parameters.IsNullOrEmpty () && !values.IsNullOrEmpty (), new ErrorDetail (
-                    StatusCodes.Status400BadRequest,
+                parameters.IsNullOrEmpty () && !values.IsNullOrEmpty (), new ArgumentError (
                     message: "The method parameters are inconsistent with the given input."))
             .OnSuccessFailWhen (parameters =>
                 !parameters.IsNullOrEmpty () &&
                 (values.IsNullOrEmpty () || parameters.Length != values!.Count),
-                new ErrorDetail (StatusCodes.Status400BadRequest,
-                    message: "The method parameters are inconsistent with the given input."));
+                new ArgumentError (message:
+                    "The method parameters are inconsistent with the given input."));
 
-        //TODO: 3
         private static MethodResult MethodParametersMustValid (
                 IReadOnlyCollection<ParameterInfo> parameters,
                 IReadOnlyCollection<object?> ? values
@@ -53,22 +48,26 @@ namespace ModelsValidation {
                 )
             );
 
-        private static MethodResult<List<KeyValuePair<ParameterInfo, object>>> MapParametersAndValues (
+        private static MethodResult<List<KeyValuePair<ParameterInfo, object?>>> MapParametersAndValues (
             IReadOnlyCollection<ParameterInfo> parameters, IReadOnlyCollection<object?> ? values) {
-            var result = new List<KeyValuePair<ParameterInfo, object>> (parameters.Count);
+            if (parameters.Count > 0 && (values is null || values.Count != parameters.Count))
+                return MethodResult<List<KeyValuePair<ParameterInfo, object?>>>.Fail (
+                    new ArgumentError (message: "The method parameters are inconsistent with the given input."));
+
+            var result = new List<KeyValuePair<ParameterInfo, object?>> (parameters.Count);
 
             for (var i = 0; i < parameters.Count; i++) {
                 var value = values.ElementAt (i);
                 var parameter = parameters.ElementAt (i);
                 if (value != null && value.GetType () != parameter.ParameterType) {
-                    return MethodResult<List<KeyValuePair<ParameterInfo, object>>>.Fail (
+                    return MethodResult<List<KeyValuePair<ParameterInfo, object?>>>.Fail (
                         new ArgumentError (message: "input types are inconsistent with parameters type."));
                 }
 
-                result.Add (new KeyValuePair<ParameterInfo, object> (parameter, value));
+                result.Add (new KeyValuePair<ParameterInfo, object?> (parameter, value));
             }
 
-            return MethodResult<List<KeyValuePair<ParameterInfo, object>>>.Ok (result);
+            return MethodResult<List<KeyValuePair<ParameterInfo, object?>>>.Ok (result);
         }
     }
 }
