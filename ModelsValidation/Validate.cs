@@ -4,9 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Reflection;
 using FunctionalUtility.Extensions;
-using FunctionalUtility.ResultDetails;
 using FunctionalUtility.ResultUtility;
-using Microsoft.AspNetCore.Http;
 using ModelsValidation.ResultDetails;
 
 namespace ModelsValidation {
@@ -14,17 +12,19 @@ namespace ModelsValidation {
         internal static MethodResult ValidateByAttribute (
                 CustomAttributeData attribute, string parameterName,
                 object? value, ValidationContext? validationContext) =>
-            OperateExtensions.OperateWhen (attribute.AttributeType.IsSubclassOf (typeof (ValidationAttribute)),
+            OperateExtensions.OperateWhen (
+                attribute.AttributeType.IsSubclassOf (typeof (ValidationAttribute)),
                 () => CreateAttributeObject (attribute)
-                .OnSuccess (attributeObj => ValidateByAttribute (attribute, attributeObj, parameterName, value,
-                    validationContext).OnSuccess (validationResult => (attribute, validationResult)))
+                .OnSuccess (attributeObj => ValidateByAttribute (attribute, attributeObj,
+                        parameterName, value, validationContext)
+                    .OnSuccess (validationResult => (attribute, validationResult))
+                )
                 .OnSuccess (result =>
-                    ValidationResultIsSuccess (result.validationResult, attribute.AttributeType,
+                    ProcessValidationResult (result.validationResult, attribute.AttributeType,
                         result.attribute, parameterName))
             );
 
-        //TODO: Refactor
-        private static MethodResult ValidationResultIsSuccess (
+        private static MethodResult ProcessValidationResult (
             object? validationResult, Type attributeType,
             object classObject, string parameterName) {
             if (validationResult is null)
@@ -39,12 +39,14 @@ namespace ModelsValidation {
                                 return MethodResult.Fail (
                                     new ArgumentError (message: "Can not find (FormatErrorMessage) to get error."));
 
-                            var errorMessage = errorMessageMethod.Invoke (classObject, new object[] { parameterName });
+                            var errorMessage = errorMessageMethod.Invoke (
+                                classObject, new object[] { parameterName });
                             if (errorMessage != null) {
                                 if (!(errorMessage is string errorResult))
                                     return MethodResult.Fail (
                                         new ArgumentError (message: "Type of error message is not expected."));
-                                return MethodResult.Fail (new ArgumentValidationError (new List<string> { errorResult }));
+                                return MethodResult.Fail (new ArgumentValidationError (
+                                    new List<string> { errorResult }));
                             }
                         }
 
@@ -53,13 +55,14 @@ namespace ModelsValidation {
                 case ValidationResult result:
                     {
                         if (!string.IsNullOrEmpty (result.ErrorMessage))
-                            return MethodResult.Fail (new ArgumentValidationError (new List<string> { result.ErrorMessage }));
+                            return MethodResult.Fail (new ArgumentValidationError (
+                                new List<string> { result.ErrorMessage }));
                         break;
                     }
                 default:
                     {
-                        return MethodResult.Fail (new ErrorDetail (StatusCodes.Status500InternalServerError,
-                            title: "OutOfRangeError", message: $"Type of {nameof(validationResult)} is not expected." +
+                        return MethodResult.Fail (new ArgumentError ("OutOfRangeError",
+                            $"Type of {nameof(validationResult)} is not expected." +
                             $" ({typeof(ValidationResult)})"));
                     }
             }
@@ -67,7 +70,6 @@ namespace ModelsValidation {
             return MethodResult.Ok ();
         }
 
-        //TODO: Refactor
         private static MethodResult<object> ValidateByAttribute (
             CustomAttributeData attribute, object classObj, string parameterName,
             object? value, ValidationContext? validationContext) {
@@ -80,17 +82,18 @@ namespace ModelsValidation {
                         return MethodResult<object>.Fail (
                             new ArgumentError (message: $"Can not find validation method. ({attribute.AttributeType})"));
 
-                    var parameters = value is null ? new object[] { } : new [] { value };
-                    validationResult = validationMethod.Invoke (classObj, parameters);
+                    //TODO: Check parameters
+                    // parameters = value is null ? new object[] { } : new [] { value }
+                    validationResult = validationMethod.Invoke (classObj, new [] { value });
                 } else {
                     validationMethod = attribute.AttributeType.GetMethod ("GetValidationResult",
                         new [] { typeof (object), typeof (ValidationContext) });
                     if (validationMethod is null) {
-                        validationMethod = attribute.AttributeType.GetMethod ("IsValid", new [] { typeof (object) });
+                        validationMethod = attribute.AttributeType.GetMethod (
+                            "IsValid", new [] { typeof (object) });
                         if (validationMethod is null)
-                            return MethodResult<object>.Fail (
-                                new ArgumentError (
-                                    message: $"Can not find validation method. ({attribute.AttributeType})"));
+                            return MethodResult<object>.Fail (new ArgumentError (
+                                message: $"Can not find validation method. ({attribute.AttributeType})"));
 
                         //TODO: Check parameters
                         //var parameters = value is null ? new object[] { } : new [] { value };
@@ -101,7 +104,7 @@ namespace ModelsValidation {
                     }
                 }
 
-                return MethodResult<object>.Ok (validationResult);
+                return MethodResult<object>.Ok (validationResult!);
             } catch (TargetInvocationException e) when (e.InnerException is NullReferenceException) {
                 return MethodResult<object>.Fail (
                     new ArgumentError (message: $"Missing parameters. ({parameterName})"));
@@ -115,16 +118,13 @@ namespace ModelsValidation {
                 attribute.AttributeType.GetConstructor (constructorArguments
                     .Select (x => x.ArgumentType).ToArray ())
                 .IsNotNull<ConstructorInfo> (
-                    new ErrorDetail (StatusCodes.Status400BadRequest,
-                        $"Can not find constructor. ({attribute.AttributeType})"))
+                    new ArgumentError (message: $"Can not find constructor. ({attribute.AttributeType})"))
                 .TryOnSuccess (constructorInfo => constructorInfo
                     .Invoke (constructorArguments
                         .Select (x => x.Value).ToArray ())
                 )
-                .OnSuccess (classObj =>
-                    SetClassNamedArguments (
-                        (IReadOnlyCollection<CustomAttributeNamedArgument>) attribute.NamedArguments, classObj)
-                )
+                .OnSuccess (classObj => SetClassNamedArguments (
+                    (IReadOnlyCollection<CustomAttributeNamedArgument>) attribute.NamedArguments, classObj))
             );
 
         private static MethodResult<object> SetClassNamedArguments (
