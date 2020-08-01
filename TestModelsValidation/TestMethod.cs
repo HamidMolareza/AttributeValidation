@@ -19,6 +19,12 @@ namespace TestModelsValidation {
             Assert.True (result.IsSuccess);
         }
 
+        [Fact]
+        public void MethodParametersMustValid_WrongImplementation_Error () {
+            var result = WrongImplementation (null, null, null, null, null);
+            Assert.False (result.IsSuccess);
+        }
+
         private static MethodResult NoParameter () =>
             MethodBase.GetCurrentMethod ()
             .Map (currentMethod =>
@@ -31,6 +37,14 @@ namespace TestModelsValidation {
             .Map (currentMethod =>
                 currentMethod!.MethodParametersMustValid (
                     new object[] { a, b, c, d, e }))
+            .MapMethodResult ();
+
+        private static MethodResult WrongImplementation (string a, int? b,
+                IReadOnlyCollection<char> c, List<SimpleModel> d, SimpleModel e) =>
+            MethodBase.GetCurrentMethod ()
+            .Map (currentMethod =>
+                currentMethod!.MethodParametersMustValid (
+                    new object[] { a, b, c, d }))
             .MapMethodResult ();
     }
 
