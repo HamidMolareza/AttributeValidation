@@ -39,6 +39,49 @@ namespace TestModelsValidation {
             var result = TestMethods.ParametersWithAttributes ("long string.", 5, null);
             Assert.False (result.IsSuccess);
         }
+
+        [Fact]
+        public void MethodParametersMustValid_CorrectComplexModel_Success () {
+            var modelWithAttributes = new ModelWithAttributes {
+                A = "a",
+                B = null,
+                C = null,
+                D = 5
+            };
+            var complexModel = new ComplexModel {
+                SimpleModel = new SimpleModel (),
+                ModelWithAttributes = new List<ModelWithAttributes> (),
+                InnerClassProp = new ComplexModel.InnerClass {
+                SimpleModel = new SimpleModel (),
+                ModelWithAttributes = modelWithAttributes,
+                ListOfModelWithAttributes = new List<ModelWithAttributes> { modelWithAttributes }
+                }
+            };
+            var result = TestMethods.ModelParameters (null, modelWithAttributes, complexModel, complexModel, "");
+            Assert.True (result.IsSuccess);
+        }
+
+        [Fact]
+        public void MethodParametersMustValid_WrongComplexModel_Error () {
+            var modelWithAttributes = new ModelWithAttributes {
+                A = "a",
+                B = null,
+                C = null,
+                D = 5
+            };
+            var complexModel = new ComplexModel {
+                SimpleModel = new SimpleModel (),
+                ModelWithAttributes = new List<ModelWithAttributes> (),
+                InnerClassProp = new ComplexModel.InnerClass {
+                SimpleModel = new SimpleModel (),
+                ModelWithAttributes = new ModelWithAttributes (),
+                ListOfModelWithAttributes = new List<ModelWithAttributes> { modelWithAttributes }
+                }
+            };
+            var result = TestMethods.ModelParameters (null, modelWithAttributes, complexModel, complexModel, "");
+            Assert.False (result.IsSuccess);
+            Assert.True (result.Detail is ArgumentValidationError);
+        }
     }
 
     public static class TestMethods {
@@ -71,12 +114,45 @@ namespace TestModelsValidation {
                 currentMethod!.MethodParametersMustValid (
                     new object[] { a, b, c }))
             .MapMethodResult ();
+
+        public static MethodResult ModelParameters (
+                ModelWithAttributes a, [Required] ModelWithAttributes b,
+                ComplexModel c, [Required] ComplexModel d, string e) =>
+            MethodBase.GetCurrentMethod ()
+            .Map (currentMethod =>
+                currentMethod!.MethodParametersMustValid (
+                    new object[] { a, b, c, d, e }))
+            .MapMethodResult ();
     }
 
-    public abstract class SimpleModel {
+    public class SimpleModel {
         public string A { get; set; }
         public int B { get; set; }
         public IReadOnlyCollection<char> C { get; set; }
         public List<int> D { get; set; }
+    }
+
+    public class ModelWithAttributes {
+        [Required][StringLength (5)] public string A { get; set; }
+
+        [Range (0, 10)] public int? B { get; set; }
+        public IReadOnlyCollection<char> C { get; set; }
+
+        [Required][Range (0, 10)] public int? D { get; set; }
+    }
+
+    public class ComplexModel {
+        [Required] public SimpleModel SimpleModel { get; set; }
+
+        [Required] public List<ModelWithAttributes> ModelWithAttributes { get; set; }
+        public InnerClass InnerClassProp { get; set; }
+
+        public class InnerClass {
+            [Required] public SimpleModel SimpleModel { get; set; }
+
+            [Required] public ModelWithAttributes ModelWithAttributes { get; set; }
+
+            [Required] public List<ModelWithAttributes> ListOfModelWithAttributes { get; set; }
+        }
     }
 }
