@@ -3,15 +3,15 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Reflection;
 using FunctionalUtility.Extensions;
-using FunctionalUtility.ResultDetails;
 using FunctionalUtility.ResultUtility;
-using Microsoft.AspNetCore.Http;
+using ModelsValidation.ResultDetails;
 
 namespace ModelsValidation {
     public static class Models {
         public static MethodResult<T> ModelsMustValid<T> (
                 this T models) where T : IEnumerable<object> =>
-            models.ForEachUntilIsSuccess (model => ModelMustValid (model).MapMethodResult ())
+            models.ForEachUntilIsSuccess (model =>
+                ModelMustValid (model).MapMethodResult ())
             .MapMethodResult (models);
 
         public static MethodResult<T> ModelMustValid<T> (
@@ -37,11 +37,12 @@ namespace ModelsValidation {
 
         private static MethodResult PropertiesMustValid<T> (
                 this IEnumerable<PropertyInfo> propertyInfos, T model) =>
-            propertyInfos.ForEachUntilIsSuccess (
+            model.IsNotNull<T> ()
+            .OnSuccess (() => propertyInfos.ForEachUntilIsSuccess (
                 propertyInfo => ModelMustValid (
                     propertyInfo.GetCustomAttributesData ().ToList (),
-                    propertyInfo.Name, propertyInfo.TryGetValue (model), new ValidationContext (model))
-            );
+                    propertyInfo.Name, propertyInfo.TryGetValue (model!), new ValidationContext (model))
+            ));
 
         private static object? TryGetValue (
                 this PropertyInfo propertyInfo,
@@ -57,12 +58,10 @@ namespace ModelsValidation {
                 ValidationContext? instance = null) =>
             OperateExtensions.OperateWhen (attributes.Any (),
                 () => GetValidParameterName (propertyName, instance)
-                .IsNotNull<string> (new ErrorDetail (StatusCodes.Status400BadRequest,
-                    "Can not detect parameter name."))
+                .IsNotNull<string> (new ArgumentError (message: "Can not detect parameter name."))
                 .OnSuccess (validParameterName =>
                     attributes.ForEachUntilIsSuccess (attribute =>
-                        Validate.ValidateByAttribute (attribute, validParameterName, value, instance)
-                    )
+                        Validate.ValidateByAttribute (attribute, validParameterName, value, instance))
                 )
             );
 
