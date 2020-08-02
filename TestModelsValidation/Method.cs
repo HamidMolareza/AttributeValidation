@@ -1,9 +1,10 @@
 using System.Collections.Generic;
 using ModelsValidation.ResultDetails;
+using TestModelsValidation.Utility;
 using Xunit;
 
 namespace TestModelsValidation {
-    public class TestMethod {
+    public class Method {
         [Fact]
         public void MethodParametersMustValid_NoParameter_Success () {
             var result = MethodUtility.NoParameter ();

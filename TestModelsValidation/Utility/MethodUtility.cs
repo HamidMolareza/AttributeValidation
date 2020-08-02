@@ -5,7 +5,7 @@ using FunctionalUtility.Extensions;
 using FunctionalUtility.ResultUtility;
 using ModelsValidation;
 
-namespace TestModelsValidation {
+namespace TestModelsValidation.Utility {
     public static class MethodUtility {
         public static MethodResult NoParameter () =>
             MethodBase.GetCurrentMethod ()

@@ -1,35 +1,59 @@
 ﻿using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
+using ModelsValidation;
+using ModelsValidation.ResultDetails;
+using TestModelsValidation.Utility;
+using Xunit;
 
 namespace TestModelsValidation {
-    public class SimpleModel {
-        public string A { get; set; }
-        public int B { get; set; }
-        public IReadOnlyCollection<char> C { get; set; }
-        public List<int> D { get; set; }
-    }
+    public class Models {
+        [Fact]
+        public void ModelsMustValid_EmptyArray_Success () {
+            var input = new object[] { };
+            var result = input.ModelsMustValid ();
+            Assert.True (result.IsSuccess);
+        }
 
-    public class ModelWithAttributes {
-        [Required][StringLength (5)] public string A { get; set; }
+        [Fact]
+        public void ModelsMustValid_CorrectComplexModel_Success () {
+            var modelWithAttributes = new ModelWithAttributes {
+                A = "a",
+                B = null,
+                C = null,
+                D = 5
+            };
+            var complexModel = new ComplexModel {
+                SimpleModel = new SimpleModel (),
+                ModelWithAttributes = new List<ModelWithAttributes> (),
+                InnerClassProp = new ComplexModel.InnerClass {
+                SimpleModel = new SimpleModel (),
+                ModelWithAttributes = modelWithAttributes,
+                ListOfModelWithAttributes = new List<ModelWithAttributes> { modelWithAttributes }
+                }
+            };
+            var result = new object[] { modelWithAttributes, complexModel }.ModelsMustValid ();
+            Assert.True (result.IsSuccess);
+        }
 
-        [Range (0, 10)] public int? B { get; set; }
-        public IReadOnlyCollection<char> C { get; set; }
-
-        [Required][Range (0, 10)] public int? D { get; set; }
-    }
-
-    public class ComplexModel {
-        [Required] public SimpleModel SimpleModel { get; set; }
-
-        [Required] public List<ModelWithAttributes> ModelWithAttributes { get; set; }
-        public InnerClass InnerClassProp { get; set; }
-
-        public class InnerClass {
-            [Required] public SimpleModel SimpleModel { get; set; }
-
-            [Required] public ModelWithAttributes ModelWithAttributes { get; set; }
-
-            [Required] public List<ModelWithAttributes> ListOfModelWithAttributes { get; set; }
+        [Fact]
+        public void MethodParametersMustValid_WrongComplexModel_Error () {
+            var modelWithAttributes = new ModelWithAttributes {
+                A = "a",
+                B = null,
+                C = null,
+                D = 5
+            };
+            var complexModel = new ComplexModel {
+                SimpleModel = new SimpleModel (),
+                ModelWithAttributes = new List<ModelWithAttributes> (),
+                InnerClassProp = new ComplexModel.InnerClass {
+                SimpleModel = new SimpleModel (),
+                ModelWithAttributes = new ModelWithAttributes (),
+                ListOfModelWithAttributes = new List<ModelWithAttributes> { modelWithAttributes }
+                }
+            };
+            var result = new object[] { modelWithAttributes, complexModel }.ModelsMustValid ();
+            Assert.False (result.IsSuccess);
+            Assert.True (result.Detail is ArgumentValidationError);
         }
     }
 }
