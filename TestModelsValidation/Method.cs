@@ -31,6 +31,12 @@ namespace TestModelsValidation {
         }
 
         [Fact]
+        public void MethodParametersMustValid_EnumerableType_Success () {
+            var result = MethodUtility.EnumerableType (new List<int> { 1, 2 }, new List<int> { 1, 2 });
+            Assert.True (result.IsSuccess);
+        }
+
+        [Fact]
         public void MethodParametersMustValid_WrongParametersWithAttributes_Error () {
             var result = MethodUtility.ParametersWithAttributes ("long string.", 5, null);
             Assert.False (result.IsSuccess);

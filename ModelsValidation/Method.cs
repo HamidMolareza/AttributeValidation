@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -60,13 +59,6 @@ namespace ModelsValidation {
             for (var i = 0; i < parameters.Count; i++) {
                 var parameter = parameters.ElementAt (i);
                 var value = values.ElementAt (i);
-                if (value != null) {
-                    var typeOfValue = value.GetType ();
-                    if (typeOfValue != parameter.ParameterType &&
-                        typeOfValue != Nullable.GetUnderlyingType (parameter.ParameterType))
-                        return MethodResult<List<KeyValuePair<ParameterInfo, object?>>>.Fail (
-                            new ArgumentError (message: "input types are inconsistent with parameters type."));
-                }
 
                 result.Add (new KeyValuePair<ParameterInfo, object?> (parameter, value));
             }

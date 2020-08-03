@@ -37,6 +37,14 @@ namespace TestModelsValidation.Utility {
                     new object[] { a, b, c }))
             .MapMethodResult ();
 
+        public static MethodResult EnumerableType (
+                [Required] IEnumerable<int> a, [Required] IReadOnlyCollection<int> b) =>
+            MethodBase.GetCurrentMethod ()
+            .Map (currentMethod =>
+                currentMethod!.MethodParametersMustValid (
+                    new object[] { a, b }))
+            .MapMethodResult ();
+
         public static MethodResult ModelParameters (
                 ModelWithAttributes a, [Required] ModelWithAttributes b,
                 ComplexModel c, [Required] ComplexModel d, string e) =>

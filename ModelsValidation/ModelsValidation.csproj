@@ -2,7 +2,7 @@
 
   <PropertyGroup>
   <PackageId>ModelsValidation</PackageId>
-  <Version>1.0.0</Version>
+  <Version>1.0.1</Version>
   <PackageTags>Validation; Attribute; Model; Validate; Functional</PackageTags>
   <Authors>Hamid Molareza</Authors>
   <RepositoryUrl>https://github.com/HamidMolareza/ModelsValidation</RepositoryUrl>
@@ -19,7 +19,7 @@
     </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="FunctionalUtility" Version="1.0.2" />
+    <PackageReference Include="FunctionalUtility" Version="1.0.7" />
   </ItemGroup>
 
 </Project>
