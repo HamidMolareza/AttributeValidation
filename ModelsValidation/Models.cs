@@ -65,7 +65,7 @@ namespace ModelsValidation {
                 ValidationContext? instance = null) =>
             OperateExtensions.OperateWhen (attributes.Any (),
                 () => GetValidParameterName (propertyName, instance)
-                .IsNotNull<string> (new ArgumentError (message: "Can not detect parameter name."))
+                .IsNotNull<string> (new BadRequestError (message: "Can not detect parameter name."))
                 .OnSuccess (validParameterName =>
                     attributes.ForEachUntilIsSuccess (attribute =>
                         Validate.ValidateByAttribute (attribute, validParameterName, value, instance))

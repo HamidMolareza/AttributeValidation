@@ -37,14 +37,15 @@ namespace ModelsValidation {
                             var errorMessageMethod = attributeType.GetMethod ("FormatErrorMessage");
                             if (errorMessageMethod is null)
                                 return MethodResult.Fail (
-                                    new ArgumentError (message: "Can not find (FormatErrorMessage) to get error."));
+                                    new BadRequestError (
+                                        message: $"Can not find (FormatErrorMessage) to get error. Type of class object: {classObject.GetType()}. ParameterName: {parameterName}"));
 
                             var errorMessage = errorMessageMethod.Invoke (
                                 classObject, new object[] { parameterName });
                             if (errorMessage != null) {
                                 if (!(errorMessage is string errorResult))
                                     return MethodResult.Fail (
-                                        new ArgumentError (message: "Type of error message is not expected."));
+                                        new BadRequestError (message: $"Type of error message is not expected.. Type of class object: {classObject.GetType()}. ParameterName: {parameterName}"));
                                 return MethodResult.Fail (new ArgumentValidationError (
                                     new List<string> { errorResult }));
                             }
@@ -61,9 +62,9 @@ namespace ModelsValidation {
                     }
                 default:
                     {
-                        return MethodResult.Fail (new ArgumentError ("OutOfRangeError",
+                        return MethodResult.Fail (new BadRequestError ("OutOfRangeError",
                             $"Type of {nameof(validationResult)} is not expected." +
-                            $" ({typeof(ValidationResult)})"));
+                            $" ({typeof(ValidationResult)}). Type of class object: {classObject.GetType()}. ParameterName: {parameterName}"));
                     }
             }
 
@@ -80,10 +81,8 @@ namespace ModelsValidation {
                     validationMethod = attribute.AttributeType.GetMethod ("IsValid", new [] { typeof (object) });
                     if (validationMethod is null)
                         return MethodResult<object>.Fail (
-                            new ArgumentError (message: $"Can not find validation method. ({attribute.AttributeType})"));
+                            new BadRequestError (message: $"Can not find validation method. (IsValid)-({attribute.AttributeType})"));
 
-                    //TODO: Check parameters
-                    // parameters = value is null ? new object[] { } : new [] { value }
                     validationResult = validationMethod.Invoke (classObj, new [] { value });
                 } else {
                     validationMethod = attribute.AttributeType.GetMethod ("GetValidationResult",
@@ -92,11 +91,9 @@ namespace ModelsValidation {
                         validationMethod = attribute.AttributeType.GetMethod (
                             "IsValid", new [] { typeof (object) });
                         if (validationMethod is null)
-                            return MethodResult<object>.Fail (new ArgumentError (
-                                message: $"Can not find validation method. ({attribute.AttributeType})"));
+                            return MethodResult<object>.Fail (new BadRequestError (
+                                message: $"Can not find validation method. (IsValid)-({attribute.AttributeType})"));
 
-                        //TODO: Check parameters
-                        //var parameters = value is null ? new object[] { } : new [] { value };
                         validationResult = validationMethod.Invoke (classObj, new [] { value });
                     } else {
                         validationContext.DisplayName = parameterName;
@@ -107,7 +104,7 @@ namespace ModelsValidation {
                 return MethodResult<object>.Ok (validationResult!);
             } catch (TargetInvocationException e) when (e.InnerException is NullReferenceException) {
                 return MethodResult<object>.Fail (
-                    new ArgumentError (message: $"Missing parameters. ({parameterName})"));
+                    new BadRequestError (message: $"Missing parameter. ({parameterName})"));
             }
         }
 
@@ -118,7 +115,7 @@ namespace ModelsValidation {
                 attribute.AttributeType.GetConstructor (constructorArguments
                     .Select (x => x.ArgumentType).ToArray ())
                 .IsNotNull<ConstructorInfo> (
-                    new ArgumentError (message: $"Can not find constructor. ({attribute.AttributeType})"))
+                    new BadRequestError (message: $"Can not find constructor. ({attribute.AttributeType})"))
                 .TryOnSuccess (constructorInfo => constructorInfo
                     .Invoke (constructorArguments
                         .Select (x => x.Value).ToArray ())

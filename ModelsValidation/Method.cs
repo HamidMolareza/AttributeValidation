@@ -22,15 +22,15 @@ namespace ModelsValidation {
         private static MethodResult<ParameterInfo[]> InputsMustValid (
                 MethodBase methodBase,
                 IReadOnlyCollection<object?> ? values) =>
-            methodBase.IsNotNull<MethodBase> (new ArgumentError ($"{nameof(methodBase)} is required."))
+            methodBase.IsNotNull<MethodBase> (new BadRequestError ($"{nameof(methodBase)} is required."))
             .TryOnSuccess (methodBase.GetParameters)
             .OnSuccessFailWhen (parameters =>
-                parameters.IsNullOrEmpty () && !values.IsNullOrEmpty (), new ArgumentError (
+                parameters.IsNullOrEmpty () && !values.IsNullOrEmpty (), new BadRequestError (
                     message: "The method parameters are inconsistent with the given input."))
             .OnSuccessFailWhen (parameters =>
                 !parameters.IsNullOrEmpty () &&
                 (values.IsNullOrEmpty () || parameters.Length != values!.Count),
-                new ArgumentError (message:
+                new BadRequestError (message:
                     "The method parameters are inconsistent with the given input."));
 
         private static MethodResult MethodParametersMustValid (
@@ -52,7 +52,7 @@ namespace ModelsValidation {
             IReadOnlyCollection<ParameterInfo> parameters, IReadOnlyCollection<object?> ? values) {
             if (parameters.Count > 0 && (values is null || values.Count != parameters.Count))
                 return MethodResult<List<KeyValuePair<ParameterInfo, object?>>>.Fail (
-                    new ArgumentError (message: "The method parameters are inconsistent with the given input."));
+                    new BadRequestError (message: "The method parameters are inconsistent with the given input."));
 
             var result = new List<KeyValuePair<ParameterInfo, object?>> (parameters.Count);
 

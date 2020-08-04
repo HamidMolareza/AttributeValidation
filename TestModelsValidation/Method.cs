@@ -22,7 +22,7 @@ namespace TestModelsValidation {
         public void MethodParametersMustValid_WrongImplementation_Error () {
             var result = MethodUtility.WrongImplementation (null, null, null, null, null);
             Assert.False (result.IsSuccess);
-            Assert.True (result.Detail is ArgumentError);
+            Assert.True (result.Detail is BadRequestError);
         }
 
         [Fact]
