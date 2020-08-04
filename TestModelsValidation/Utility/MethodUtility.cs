@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Reflection;
+using System.Security.Claims;
 using FunctionalUtility.Extensions;
 using FunctionalUtility.ResultUtility;
 using ModelsValidation;
@@ -52,6 +53,14 @@ namespace TestModelsValidation.Utility {
             .Map (currentMethod =>
                 currentMethod!.MethodParametersMustValid (
                     new object[] { a, b, c, d, e }))
+            .MapMethodResult ();
+
+        public static MethodResult InputIsClaimType (
+                [Required] IEnumerable<Claim> claims) =>
+            MethodBase.GetCurrentMethod ()
+            .Map (currentMethod =>
+                currentMethod!.MethodParametersMustValid (
+                    new object[] { claims }))
             .MapMethodResult ();
     }
 }

@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Security.Claims;
 using ModelsValidation.ResultDetails;
 using TestModelsValidation.Utility;
 using Xunit;
@@ -33,6 +34,14 @@ namespace TestModelsValidation {
         [Fact]
         public void MethodParametersMustValid_EnumerableType_Success () {
             var result = MethodUtility.EnumerableType (new List<int> { 1, 2 }, new List<int> { 1, 2 });
+            Assert.True (result.IsSuccess);
+        }
+
+        [Fact]
+        public void MethodParametersMustValid_InputIsClaimType_Success () {
+            var result = MethodUtility.InputIsClaimType (new [] {
+                new Claim (ClaimTypes.NameIdentifier, "value")
+            });
             Assert.True (result.IsSuccess);
         }
 

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Reflection;
@@ -31,9 +32,15 @@ namespace ModelsValidation {
                 ValidationContext validationContext) =>
             OperateExtensions.OperateWhen (attributes.Any (),
                 () => PropertyMustValid (attributes, propertyName, value, validationContext))
-            .OnSuccessOperateWhen (value != null && value.GetType ().Namespace != "System",
+            .OnSuccessOperateWhen (value != null && NeedToCheck (value.GetType ()),
                 () => ModelMustValid (value)
                 .MapMethodResult ());
+
+        private static bool NeedToCheck (Type type) {
+            if (type.Namespace != null && type.Namespace.StartsWith ("System"))
+                return false;
+            return !type.IsArray && type.IsClass && !type.IsEnum && !type.IsInterface && !type.IsPointer;
+        }
 
         private static MethodResult PropertiesMustValid<T> (
                 this IEnumerable<PropertyInfo> propertyInfos, T model) =>
