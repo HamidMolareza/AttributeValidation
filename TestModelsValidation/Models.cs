@@ -9,7 +9,7 @@ namespace TestModelsValidation {
         [Fact]
         public void ModelsMustValid_EmptyArray_Success () {
             var input = new object[] { };
-            var result = input.ModelsMustValid ();
+            var result = input.ModelsMustValid (false);
             Assert.True (result.IsSuccess);
         }
 
@@ -30,7 +30,7 @@ namespace TestModelsValidation {
                 ListOfModelWithAttributes = new List<ModelWithAttributes> { modelWithAttributes }
                 }
             };
-            var result = new object[] { modelWithAttributes, complexModel }.ModelsMustValid ();
+            var result = new object[] { modelWithAttributes, complexModel }.ModelsMustValid (false);
             Assert.True (result.IsSuccess);
         }
 
@@ -51,7 +51,7 @@ namespace TestModelsValidation {
                 ListOfModelWithAttributes = new List<ModelWithAttributes> { modelWithAttributes }
                 }
             };
-            var result = new object[] { modelWithAttributes, complexModel }.ModelsMustValid ();
+            var result = new object[] { modelWithAttributes, complexModel }.ModelsMustValid (false);
             Assert.False (result.IsSuccess);
             Assert.True (result.Detail is ArgumentValidationError);
         }
