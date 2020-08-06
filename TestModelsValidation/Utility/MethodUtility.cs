@@ -23,7 +23,7 @@ namespace TestModelsValidation.Utility {
             .MapMethodResult ();
 
         public static MethodResult WrongImplementation (string a, int? b,
-                IReadOnlyCollection<char> c, List<SimpleModel> d, SimpleModel e) =>
+                IReadOnlyCollection<char> c, List<SimpleModel> d, SimpleModel _) =>
             MethodBase.GetCurrentMethod ()
             .Map (currentMethod =>
                 currentMethod!.MethodParametersMustValid (
