@@ -62,5 +62,21 @@ namespace TestModelsValidation.Utility {
                 currentMethod!.MethodParametersMustValid (
                     new object[] { claims }, false))
             .MapMethodResult ();
+
+        public static MethodResult CheckDepth (
+                [Required] ModelDepth0 model, int maximumDepth) =>
+            MethodBase.GetCurrentMethod ()
+            .Map (currentMethod =>
+                currentMethod!.MethodParametersMustValid (
+                    new object[] { model, maximumDepth }, false, maximumDepth))
+            .MapMethodResult ();
+
+        public static MethodResult CheckDepthSingleModel (
+                [Required] ModelWithAttributes model, int maximumDepth) =>
+            MethodBase.GetCurrentMethod ()
+            .Map (currentMethod =>
+                currentMethod!.MethodParametersMustValid (
+                    new object[] { model, maximumDepth }, false, maximumDepth))
+            .MapMethodResult ();
     }
 }

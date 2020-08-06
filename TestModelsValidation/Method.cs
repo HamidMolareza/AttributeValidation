@@ -32,6 +32,13 @@ namespace TestModelsValidation {
         }
 
         [Fact]
+        public void MethodParametersMustValid_WrongParametersWithAttributes_Error () {
+            var result = MethodUtility.ParametersWithAttributes ("long string.", 5, null);
+            Assert.False (result.IsSuccess);
+            Assert.True (result.Detail is ArgumentValidationError);
+        }
+
+        [Fact]
         public void MethodParametersMustValid_EnumerableType_Success () {
             var result = MethodUtility.EnumerableType (new List<int> { 1, 2 }, new List<int> { 1, 2 });
             Assert.True (result.IsSuccess);
@@ -46,9 +53,53 @@ namespace TestModelsValidation {
         }
 
         [Fact]
-        public void MethodParametersMustValid_WrongParametersWithAttributes_Error () {
-            var result = MethodUtility.ParametersWithAttributes ("long string.", 5, null);
+        public void MethodParametersMustValid_CheckDepth1_Success () {
+            var model = new ModelDepth0 {
+                ModelDepth1 = new ModelDepth1 {
+                ModelDepth2 = new ModelDepth2 { A = "1" }
+                }
+            };
+            var result = MethodUtility.CheckDepth (model, 1);
+            Assert.True (result.IsSuccess);
+        }
+
+        [Fact]
+        public void MethodParametersMustValid_CheckDepth2_Fail () {
+            var model = new ModelDepth0 {
+                ModelDepth1 = new ModelDepth1 {
+                ModelDepth2 = new ModelDepth2 { A = "1" }
+                }
+            };
+
+            var result = MethodUtility.CheckDepth (model, 2);
+
             Assert.False (result.IsSuccess);
+            Assert.True (result.Detail is ArgumentValidationError);
+        }
+
+        [Fact]
+        public void MethodParametersMustValid_CheckDepthSingleModel_Success () {
+            var model = new ModelWithAttributes {
+                A = "1",
+                B = 5,
+                C = null,
+                D = 5
+            };
+            var result = MethodUtility.CheckDepthSingleModel (model, 0);
+            Assert.True (result.IsSuccess);
+        }
+
+        [Fact]
+        public void MethodParametersMustValid_CheckDepthSingleModel_Fail () {
+            var model = new ModelWithAttributes {
+                A = "TheLongText",
+                B = 5,
+                C = null,
+                D = 5
+            };
+            var result = MethodUtility.CheckDepthSingleModel (model, 0);
+            Assert.False (result.IsSuccess);
+            Assert.True (result.Detail is ArgumentValidationError);
         }
 
         [Fact]

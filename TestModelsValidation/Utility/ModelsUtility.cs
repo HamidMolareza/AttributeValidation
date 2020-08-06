@@ -32,4 +32,19 @@ namespace TestModelsValidation.Utility {
             [Required] public List<ModelWithAttributes> ListOfModelWithAttributes { get; set; }
         }
     }
+
+    public class ModelDepth0 {
+        [Required]
+        public ModelDepth1 ModelDepth1 { get; set; }
+    }
+
+    public class ModelDepth1 {
+        [Required]
+        public ModelDepth2 ModelDepth2 { get; set; }
+    }
+
+    public class ModelDepth2 {
+        [Required][StringLength (10, MinimumLength = 5)]
+        public string A { get; set; }
+    }
 }
