@@ -19,13 +19,11 @@ namespace ModelsValidation.ResultDetails {
         public List<string> Errors { get; }
 
         public override object GetViewModel () =>
-            ShowDefaultMessageToUser?
-        new {
-            StatusCode,
-            Title = nameof (ArgumentValidationError),
-            Message = "One or more validation failed.",
-            Errors = new List<string> ()
-        }:
-        new { StatusCode, Title, Message, Errors };
+            ShowDefaultMessageToUser?(object) new {
+                StatusCode,
+                Title = nameof (ArgumentValidationError),
+                Message = "One or more validation failed."
+            }:
+            new { StatusCode, Title, Message, Errors };
     }
 }

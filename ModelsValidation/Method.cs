@@ -11,11 +11,14 @@ namespace ModelsValidation {
         public static MethodResult<MethodBase> MethodParametersMustValid (
                 this MethodBase methodBase,
                 IReadOnlyCollection<object?> ? values,
-                bool showDefaultMessageToUser = true) =>
+                bool showDefaultMessageToUser = true,
+                int maximumDepth = SettingClass.MaximumDepth) =>
             InputsMustValid (methodBase, values)
             .OnSuccessOperateWhen (parameters => parameters.IsNotNullOrEmpty (),
                 parameters =>
-                MethodParametersMustValid (parameters, values, showDefaultMessageToUser)
+                MethodParametersMustValid (parameters, values,
+                    showDefaultMessageToUser : showDefaultMessageToUser,
+                    maximumDepth : maximumDepth)
                 .MapMethodResult (parameters)
             )
             .MapMethodResult (methodBase);
@@ -36,7 +39,9 @@ namespace ModelsValidation {
 
         private static MethodResult MethodParametersMustValid (
                 IReadOnlyCollection<ParameterInfo> parameters,
-                IReadOnlyCollection<object?> ? values, bool showDefaultMessageToUser
+                IReadOnlyCollection<object?> ? values,
+                bool showDefaultMessageToUser,
+                int maximumDepth
             ) => MapParametersAndValues (parameters, values)
             .OnSuccess (parametersWithValues =>
                 (validationContext: new ValidationContext (values), parametersWithValues))
@@ -46,7 +51,8 @@ namespace ModelsValidation {
                         parameterWithValue.Key.GetCustomAttributesData ().ToList (),
                         parameterWithValue.Key.Name,
                         parameterWithValue.Value, result.validationContext,
-                        showDefaultMessageToUser)
+                        showDefaultMessageToUser,
+                        SettingClass.BeginDepth, maximumDepth)
                 )
             );
 

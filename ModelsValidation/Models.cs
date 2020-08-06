@@ -10,19 +10,23 @@ using ModelsValidation.ResultDetails;
 namespace ModelsValidation {
     public static class Models {
         public static MethodResult<T> ModelsMustValid<T> (
-            this T models, bool showDefaultMessageToUser = true)
+            this T models, bool showDefaultMessageToUser = true,
+            int maximumDepth = SettingClass.MaximumDepth)
         where T : IEnumerable<object> =>
             models.ForEachUntilIsSuccess (model =>
-                ModelMustValid (model, showDefaultMessageToUser).MapMethodResult ())
+                ModelMustValid (model, depth : SettingClass.BeginDepth, maximumDepth : maximumDepth,
+                    showDefaultMessageToUser).MapMethodResult ())
             .MapMethodResult (models);
 
         public static MethodResult<T> ModelMustValid<T> (
-                this T model, bool showDefaultMessageToUser = true) =>
+                this T model, int depth, int maximumDepth,
+                bool showDefaultMessageToUser = true) =>
             MethodResult<T>.Ok (model)
             .OnSuccessOperateWhen (model.IsNotNull<T> ().IsSuccess,
                 () => model!.GetType ().GetProperties ()
                 .OperateWhen (propertyInfos => propertyInfos.Any (),
-                    propertyInfos => propertyInfos.PropertiesMustValid (model, showDefaultMessageToUser)
+                    propertyInfos => propertyInfos.PropertiesMustValid (
+                        model, showDefaultMessageToUser, depth, maximumDepth)
                     .MapMethodResult (propertyInfos))
                 .MapMethodResult (model)
             );
@@ -32,14 +36,19 @@ namespace ModelsValidation {
                 string? propertyName,
                 object? value,
                 ValidationContext validationContext,
-                bool showDefaultMessageToUser) =>
+                bool showDefaultMessageToUser,
+                int depth, int maximumDepth) =>
             OperateExtensions.OperateWhen (attributes.Any (),
-                () => PropertyMustValid (attributes, propertyName, value, showDefaultMessageToUser, validationContext))
-            .OnSuccessOperateWhen (value != null && NeedToCheck (value.GetType ()),
-                () => ModelMustValid (value, showDefaultMessageToUser)
+                () => PropertyMustValid (attributes, propertyName,
+                    value, showDefaultMessageToUser, validationContext))
+            .OnSuccessOperateWhen (value != null && NeedToCheck (value.GetType (), depth, maximumDepth),
+                () => ModelMustValid (value, depth + 1, maximumDepth,
+                    showDefaultMessageToUser : showDefaultMessageToUser)
                 .MapMethodResult ());
 
-        private static bool NeedToCheck (Type type) {
+        private static bool NeedToCheck (Type type, int depth, int maximumDepth) {
+            if (depth >= maximumDepth)
+                return false;
             if (type.Namespace != null && type.Namespace.StartsWith ("System"))
                 return false;
             return !type.IsArray && type.IsClass && !type.IsEnum && !type.IsInterface && !type.IsPointer;
@@ -47,13 +56,15 @@ namespace ModelsValidation {
 
         private static MethodResult PropertiesMustValid<T> (
                 this IEnumerable<PropertyInfo> propertyInfos, T model,
-                bool showDefaultMessageToUser) =>
+                bool showDefaultMessageToUser,
+                int depth,
+                int maximumDepth) =>
             model.IsNotNull<T> ()
             .OnSuccess (() => propertyInfos.ForEachUntilIsSuccess (
                 propertyInfo => ModelMustValid (
                     propertyInfo.GetCustomAttributesData ().ToList (),
                     propertyInfo.Name, propertyInfo.TryGetValue (model!),
-                    new ValidationContext (model), showDefaultMessageToUser)
+                    new ValidationContext (model), showDefaultMessageToUser, depth, maximumDepth)
             ));
 
         private static object? TryGetValue (
