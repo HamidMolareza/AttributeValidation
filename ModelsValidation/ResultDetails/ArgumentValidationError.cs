@@ -7,12 +7,13 @@ namespace ModelsValidation.ResultDetails {
     public class ArgumentValidationError : ErrorDetail {
         public ArgumentValidationError (List<string> errors, string? title = null,
                 string? message = null, Exception? exception = null,
-                bool showDefaultMessageToUser = true):
+                bool showDefaultMessageToUser = true, object? detail = null):
             base (StatusCodes.Status400BadRequest,
                 title ?? nameof (ArgumentValidationError),
                 message ?? "One or more validation failed.",
                 exception : exception,
-                showDefaultMessageToUser : showDefaultMessageToUser) {
+                showDefaultMessageToUser : showDefaultMessageToUser,
+                detail : detail) {
                 Errors = errors;
             }
 
