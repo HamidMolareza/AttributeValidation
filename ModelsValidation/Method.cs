@@ -29,13 +29,16 @@ namespace ModelsValidation {
             methodBase.IsNotNull<MethodBase> (new BadRequestError ($"{nameof(methodBase)} is required."))
             .TryOnSuccess (methodBase.GetParameters)
             .OnSuccessFailWhen (parameters =>
-                parameters.IsNullOrEmpty () && !values.IsNullOrEmpty (), new BadRequestError (
-                    message: "The method parameters are inconsistent with the given input."))
+                parameters.IsNullOrEmpty () && !values.IsNullOrEmpty (),
+                parameters => new BadRequestError (
+                    message: "The method parameters are inconsistent with the given input.",
+                    moreDetail : new { parameters, values }))
             .OnSuccessFailWhen (parameters =>
                 !parameters.IsNullOrEmpty () &&
                 (values.IsNullOrEmpty () || parameters.Length != values!.Count),
-                new BadRequestError (message:
-                    "The method parameters are inconsistent with the given input."));
+                parameters => new BadRequestError (message:
+                    "The method parameters are inconsistent with the given input.",
+                    moreDetail : new { parameters, values }));
 
         private static MethodResult MethodParametersMustValid (
                 IReadOnlyCollection<ParameterInfo> parameters,
@@ -60,7 +63,9 @@ namespace ModelsValidation {
             IReadOnlyCollection<ParameterInfo> parameters, IReadOnlyCollection<object?> ? values) {
             if (parameters.Count > 0 && (values is null || values.Count != parameters.Count))
                 return MethodResult<List<KeyValuePair<ParameterInfo, object?>>>.Fail (
-                    new BadRequestError (message: "The method parameters are inconsistent with the given input."));
+                    new BadRequestError (
+                        message: "The method parameters are inconsistent with the given input.",
+                        moreDetail : new { parameters, values }));
 
             var result = new List<KeyValuePair<ParameterInfo, object?>> (parameters.Count);
 
