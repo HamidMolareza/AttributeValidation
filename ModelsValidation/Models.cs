@@ -91,7 +91,7 @@ namespace ModelsValidation {
         private static object? TryGetValue (
                 this PropertyInfo propertyInfo,
                 object values) => values
-            .Try (propertyInfo.GetValue)
+            .TryMap (propertyInfo.GetValue)
             .OnFail (() => MethodResult<object?>.Ok (null))
             .GetValue ();
 
