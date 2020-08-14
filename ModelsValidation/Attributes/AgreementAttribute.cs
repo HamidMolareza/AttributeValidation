@@ -10,6 +10,6 @@ namespace ModelsValidation.Attributes {
         protected override ValidationResult IsValid (object? obj,
                 ValidationContext validationContext) =>
             AttributeUtility.AttributeValidation<bool> (obj,
-                value => value == false, ErrorMessage ?? "{0] is required.");
+                value => value == false, ErrorMessage ?? "{0} is required.");
     }
 }

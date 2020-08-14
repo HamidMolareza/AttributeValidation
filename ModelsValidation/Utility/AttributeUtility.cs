@@ -27,7 +27,7 @@ namespace ModelsValidation.Utility {
             ValidationResult.Success :
             value!.As<T> ()
             .OnSuccessFailWhen (predicate,
-                new AttributeValidationError (message: errorMessage ?? "{0] is not valid."))
+                new AttributeValidationError (message: errorMessage ?? "{0} is not valid."))
             .MapToValidationResult ();
 
         public static ValidationResult AttributeValidation<T> (
