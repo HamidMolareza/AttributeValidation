@@ -7,11 +7,10 @@ using PhoneNumbers;
 
 namespace ModelsValidation.Utility {
     public static class PhoneUtility {
-        public static string TryGetPhone (
+        public static string? TryGetPhone (
                 string phone) =>
-            GetPhone (phone)
-            .OnFail (() => MethodResult<string>.Ok (string.Empty))
-            .GetValue ();
+            TryExtensions.Try (() => GetPhone (phone))
+            .Map (methodResult => methodResult.IsSuccess? methodResult.Value : null);
 
         public static MethodResult<string> GetPhone (
                 string phone) =>
