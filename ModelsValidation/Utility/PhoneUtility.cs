@@ -22,16 +22,17 @@ namespace ModelsValidation.Utility {
 
         public static MethodResult<string> PhoneMustValid (this string @this) =>
             @this.IsNotNull<string> ()
-            .TryTeeOnSuccess (phoneNumber =>
-                phoneNumber.TryTee (() =>
+            .TryOnSuccess (phoneNumber =>
+                TryExtensions.Try (() =>
                     phoneNumber.MustMatchRegex (new Regex (@"^[+0-9][0-9]+$"),
                         new ErrorDetail (StatusCodes.Status400BadRequest,
-                            "{0} is not valid.")))
-                .TeeOnSuccess (() => GetParsedPhoneNumber (phoneNumber))
-                .TeeOnSuccess (() => phoneNumber.Must (
+                            message: "{0} is not valid.")))
+                .OnSuccess (() => GetParsedPhoneNumber (phoneNumber))
+                .OnFail (new ErrorDetail (StatusCodes.Status400BadRequest, message: "{0} is not valid."))
+                .OnSuccess (() => phoneNumber.Must (
                     phoneNumber.Length >= 5 && phoneNumber.Length <= 30,
                     new ErrorDetail (StatusCodes.Status400BadRequest,
-                        "Phone is not valid.", "Length error.")))
+                        "{0} is not valid.", "The {0} length is not valid.")))
             ).OnFail (new { Phone = @this });
 
         private static MethodResult<PhoneNumber> GetParsedPhoneNumber (

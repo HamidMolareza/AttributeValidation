@@ -55,5 +55,55 @@ namespace TestModelsValidation.Utility {
                 [Agreement (ErrorMessage = "{0} is required.")] bool agreement) =>
             ModelsValidation.Method.MethodParametersMustValid (new object[] { agreement },
                 showDefaultMessageToUser : false);
+
+        public static MethodResult AgreementAttributeOnInvalidType (
+                [Agreement] string agreement) =>
+            ModelsValidation.Method.MethodParametersMustValid (new object[] { agreement },
+                showDefaultMessageToUser : false);
+
+        public static MethodResult AgreementAttribute (
+                [Agreement (ErrorMessage = "{0} is required.")] bool agreement) =>
+            ModelsValidation.Method.MethodParametersMustValid (new object[] { agreement },
+                showDefaultMessageToUser : false);
+
+        public static MethodResult EmailAttributeOnInvalidType ([Email] bool email) =>
+            ModelsValidation.Method.MethodParametersMustValid (new object[] { email },
+                showDefaultMessageToUser : false);
+
+        public static MethodResult EmailAttribute ([Email (MinimumLength = 10, MaximumLength = 90)] string email) =>
+            ModelsValidation.Method.MethodParametersMustValid (new object[] { email },
+                showDefaultMessageToUser : false);
+
+        public static MethodResult NonNegativeIntegerAttributeOnInvalidType ([NonNegativeInteger] List<string> nonNegativeInteger) =>
+            ModelsValidation.Method.MethodParametersMustValid (new object[] { nonNegativeInteger },
+                showDefaultMessageToUser : false);
+
+        public static MethodResult NonNegativeIntegerAttribute ([NonNegativeInteger] int nonNegativeInteger) =>
+            ModelsValidation.Method.MethodParametersMustValid (new object[] { nonNegativeInteger },
+                showDefaultMessageToUser : false);
+
+        public static MethodResult PhoneNumberAttributeOnInvalidType ([PhoneNumber] int phoneNumber) =>
+            ModelsValidation.Method.MethodParametersMustValid (new object[] { phoneNumber },
+                showDefaultMessageToUser : false);
+
+        public static MethodResult PhoneNumberAttribute ([PhoneNumber] string phoneNumber) =>
+            ModelsValidation.Method.MethodParametersMustValid (new object[] { phoneNumber },
+                showDefaultMessageToUser : false);
+
+        public static MethodResult PositiveIntegerAttributeOnInvalidType ([PositiveInteger] List<string> positiveInteger) =>
+            ModelsValidation.Method.MethodParametersMustValid (new object[] { positiveInteger },
+                showDefaultMessageToUser : false);
+
+        public static MethodResult PositiveIntegerAttribute ([PositiveInteger] int positiveInteger) =>
+            ModelsValidation.Method.MethodParametersMustValid (new object[] { positiveInteger },
+                showDefaultMessageToUser : false);
+
+        public static MethodResult UserNameAttributeOnInvalidType ([UserName] List<string> username) =>
+            ModelsValidation.Method.MethodParametersMustValid (new object[] { username },
+                showDefaultMessageToUser : false);
+
+        public static MethodResult UserNameAttribute ([UserName (MinimumLength = 5, MaximumLength = 35)] string username) =>
+            ModelsValidation.Method.MethodParametersMustValid (new object[] { username },
+                showDefaultMessageToUser : false);
     }
 }
