@@ -7,47 +7,47 @@ using ModelsValidation.ResultDetails;
 namespace ModelsValidation.Utility {
     public static class AttributeUtility {
         private static string GetErrorMessage (
-            ResultDetail resultDetail) => resultDetail.Message;
+            ResultDetail resultDetail, Func<string, string> format) => format (resultDetail.Message);
 
         public static ValidationResult MapToValidationResult (
-            this MethodResult @this
+            this MethodResult @this, Func<string, string> format
         ) => @this.MapMethodResult (
             () => ValidationResult.Success,
             errorDetail =>
-            new ValidationResult (GetErrorMessage (errorDetail))
+            new ValidationResult (GetErrorMessage (errorDetail, format))
         );
 
         public static ValidationResult MapToValidationResult<T> (
-            this MethodResult<T> @this
-        ) => @this.MapMethodResult ().MapToValidationResult ();
+            this MethodResult<T> @this, Func<string, string> format
+        ) => @this.MapMethodResult ().MapToValidationResult (format);
 
         public static ValidationResult AttributeValidation<T> (
-                object? value, Func<T, bool> predicate, string? errorMessage) =>
+                object? value, Func<T, bool> predicate, Func<string, string> format, string? errorMessage) =>
             value is null ?
             ValidationResult.Success :
             value!.As<T> ()
             .OnSuccessFailWhen (predicate,
                 new AttributeValidationError (message: errorMessage ?? "{0} is not valid."))
-            .MapToValidationResult ();
+            .MapToValidationResult (format);
 
         public static ValidationResult AttributeValidation<T> (
-                object? value, Func<T, MethodResult> predicate, string? errorMessage) =>
+                object? value, Func<T, MethodResult> predicate, Func<string, string> format, string? errorMessage) =>
             value is null ?
             ValidationResult.Success :
             value!.As<T> ()
             .OnSuccess (predicate)
             .OnFail (result => result.Fail (
-                new AttributeValidationError (message: errorMessage ?? GetErrorMessage (result.Detail))))
-            .MapToValidationResult ();
+                new AttributeValidationError (message: errorMessage ?? result.Detail.Message)))
+            .MapToValidationResult (format);
 
         public static ValidationResult AttributeValidation<T> (
-                object? value, Func<T, MethodResult<T>> predicate, string? errorMessage) =>
+                object? value, Func<T, MethodResult<T>> predicate, Func<string, string> format, string? errorMessage) =>
             value is null ?
             ValidationResult.Success :
             value!.As<T> ()
             .OnSuccess (predicate)
             .OnFail (result => result.Fail (
-                new AttributeValidationError (message: errorMessage ?? GetErrorMessage (result.Detail))))
-            .MapToValidationResult ();
+                new AttributeValidationError (message: errorMessage ?? result.Detail.Message)))
+            .MapToValidationResult (format);
     }
 }

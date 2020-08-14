@@ -2,6 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.Security.Claims;
 using FunctionalUtility.ResultUtility;
+using ModelsValidation.Attributes;
 
 namespace TestModelsValidation.Utility {
     public static class MethodUtility {
@@ -49,5 +50,10 @@ namespace TestModelsValidation.Utility {
                 [Required] ModelWithAttributes model, int maximumDepth) =>
             ModelsValidation.Method.MethodParametersMustValid (new object[] { model, maximumDepth },
                 showDefaultMessageToUser : false, maximumDepth : maximumDepth);
+
+        public static MethodResult SimpleAttribute (
+                [Agreement (ErrorMessage = "{0} is required.")] bool agreement) =>
+            ModelsValidation.Method.MethodParametersMustValid (new object[] { agreement },
+                showDefaultMessageToUser : false);
     }
 }
