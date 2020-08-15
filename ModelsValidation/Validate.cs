@@ -4,6 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Reflection;
 using FunctionalUtility.Extensions;
+using FunctionalUtility.ResultDetails.Errors;
 using FunctionalUtility.ResultUtility;
 using ModelsValidation.ResultDetails;
 
@@ -39,7 +40,7 @@ namespace ModelsValidation {
                                 return MethodResult.Fail (
                                     new BadRequestError (
                                         message: $"Can not find (FormatErrorMessage) to get error. Type of class object: {classObject.GetType()}.",
-                                        moreDetail : new { validationResult, attributeType, parameterName }));
+                                        moreDetails : new { validationResult, attributeType, parameterName }));
 
                             var errorMessage = errorMessageMethod.Invoke (
                                 classObject, new object[] { parameterName });
@@ -47,7 +48,7 @@ namespace ModelsValidation {
                                 if (!(errorMessage is string errorResult))
                                     return MethodResult.Fail (
                                         new BadRequestError (message: $"Type of error message is not expected.. Type of class object: {classObject.GetType()}.",
-                                            moreDetail : new { errorMessage, validationResult, attributeType, parameterName }));
+                                            moreDetails : new { errorMessage, validationResult, attributeType, parameterName }));
                                 return MethodResult.Fail (new ArgumentValidationError (
                                     new List<string> { errorResult }, showDefaultMessageToUser : showDefaultMessageToUser));
                             }
@@ -67,7 +68,7 @@ namespace ModelsValidation {
                         return MethodResult.Fail (new BadRequestError ("OutOfRangeError",
                             $"Type of {nameof(validationResult)} is not expected." +
                             $" ({typeof(ValidationResult)}). Type of class object: {classObject.GetType()}.",
-                            moreDetail : new { validationResult, attributeType, parameterName }));
+                            moreDetails : new { validationResult, attributeType, parameterName }));
                     }
             }
 
@@ -85,7 +86,7 @@ namespace ModelsValidation {
                     if (validationMethod is null)
                         return MethodResult<object>.Fail (
                             new BadRequestError (message: $"Can not find validation method. (IsValid)-({attribute.AttributeType})",
-                                moreDetail : new { parameterName, value, validationContext }));
+                                moreDetails : new { parameterName, value, validationContext }));
 
                     validationResult = validationMethod.Invoke (classObj, new [] { value });
                 } else {
@@ -97,7 +98,7 @@ namespace ModelsValidation {
                         if (validationMethod is null)
                             return MethodResult<object>.Fail (new BadRequestError (
                                 message: $"Can not find validation method. (IsValid)-({attribute.AttributeType})",
-                                moreDetail : new { parameterName, value, validationContext }));
+                                moreDetails : new { parameterName, value, validationContext }));
 
                         validationResult = validationMethod.Invoke (classObj, new [] { value });
                     } else {
@@ -110,7 +111,7 @@ namespace ModelsValidation {
             } catch (TargetInvocationException e) when (e.InnerException is NullReferenceException) {
                 return MethodResult<object>.Fail (
                     new BadRequestError (message: $"Missing parameter. ({parameterName})",
-                        moreDetail : new { parameterName, value, validationContext }));
+                        moreDetails : new { parameterName, value, validationContext }));
             }
         }
 

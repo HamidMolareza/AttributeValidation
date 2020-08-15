@@ -1,6 +1,6 @@
 using System.Text.RegularExpressions;
 using FunctionalUtility.Extensions;
-using FunctionalUtility.ResultDetails;
+using FunctionalUtility.ResultDetails.Errors;
 using FunctionalUtility.ResultUtility;
 using Microsoft.AspNetCore.Http;
 using PhoneNumbers;

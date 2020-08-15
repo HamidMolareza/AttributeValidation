@@ -5,9 +5,8 @@ using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using FunctionalUtility.Extensions;
-using FunctionalUtility.ResultDetails;
+using FunctionalUtility.ResultDetails.Errors;
 using FunctionalUtility.ResultUtility;
-using ModelsValidation.ResultDetails;
 
 namespace ModelsValidation {
     public static class Method {
@@ -64,13 +63,13 @@ namespace ModelsValidation {
                 parameters.IsNullOrEmpty () && !values.IsNullOrEmpty (),
                 new BadRequestError (
                     message: "The method parameters are inconsistent with the given input.",
-                    moreDetail : new { parameters, values }))
+                    moreDetails : new { parameters, values }))
             .OnSuccessFailWhen (() =>
                 !parameters.IsNullOrEmpty () &&
                 (values.IsNullOrEmpty () || parameters.Length != values!.Count),
                 new BadRequestError (message:
                     "The method parameters are inconsistent with the given input.",
-                    moreDetail : new { parameters, values }));
+                    moreDetails : new { parameters, values }));
 
         private static MethodResult MethodParametersMustValid (
                 IReadOnlyCollection<ParameterInfo> parameters,
@@ -97,7 +96,7 @@ namespace ModelsValidation {
                 return MethodResult<List<KeyValuePair<ParameterInfo, object?>>>.Fail (
                     new BadRequestError (
                         message: "The method parameters are inconsistent with the given input.",
-                        moreDetail : new { parameters, values }));
+                        moreDetails : new { parameters, values }));
 
             var result = new List<KeyValuePair<ParameterInfo, object?>> (parameters.Count);
 
