@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Security.Claims;
+using FunctionalUtility.ResultDetails.Errors;
 using ModelsValidation.ResultDetails;
 using TestModelsValidation.Utility;
 using Xunit;

@@ -1,4 +1,4 @@
-﻿using FunctionalUtility.ResultDetails;
+﻿using FunctionalUtility.ResultDetails.Errors;
 using Microsoft.AspNetCore.Http;
 
 namespace ModelsValidation.ResultDetails {

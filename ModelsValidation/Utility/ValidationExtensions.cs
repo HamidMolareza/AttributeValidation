@@ -1,7 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.Text.RegularExpressions;
 using FunctionalUtility.Extensions;
-using FunctionalUtility.ResultDetails;
+using FunctionalUtility.ResultDetails.Errors;
 using FunctionalUtility.ResultUtility;
 using Microsoft.AspNetCore.Http;
 
@@ -16,7 +16,7 @@ namespace ModelsValidation.Utility {
             .OnSuccess (username =>
                 username.Must (username.Length >= minimumLength && username.Length <= maximumLength,
                     new ErrorDetail (StatusCodes.Status400BadRequest,
-                        "{0} is not valid.", "The length must be between {1} and {2}")))
+                        "{0} is not valid.", "The length must be between {1} and {2}.")))
             .OnFail (new { UserName = @this });
 
         public static MethodResult<int> MustPositiveInteger (this int @this) =>
@@ -43,7 +43,7 @@ namespace ModelsValidation.Utility {
                 email.Must (
                     email.Length >= minimumLength && email.Length <= maximumLength,
                     new ErrorDetail (StatusCodes.Status400BadRequest,
-                        "{0} is not valid.", "The length must be between {1} and {2}")))
+                        "{0} is not valid.", "The length must be between {1} and {2}.")))
             .OnFail (new { Email = @this });
     }
 }
