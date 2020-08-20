@@ -6,7 +6,8 @@ $.validator.addMethod('phoneNumber', function (value, element, params) {
     if(!RegExp(params['pattern']).test(value))
         return false;
 
-    if(value < params['minLength'] || value > params['maxLength'])
+    const length = value.length;
+    if(length < params['minLength'] || length > params['maxLength'])
         return false;
 
     return true;
@@ -24,7 +25,7 @@ $.validator.unobtrusive.adapters.add('phoneNumber', ['minLength','pattern','maxL
 
 // Agreement
 $.validator.addMethod('agreement', function (value, element, params) {
-    return value === true;
+    return value === "true";
 });
 
 $.validator.unobtrusive.adapters.add('agreement', [], function (options) {
@@ -41,7 +42,8 @@ $.validator.addMethod('email', function (value, element, params) {
     if(!isEmailValid(value))
         return false;
 
-    if(value < params['minLength'] || value > params['maxLength'])
+    const length = value.length;
+    if(length < params['minLength'] || length > params['maxLength'])
         return false;
 
     return true;
@@ -91,7 +93,8 @@ $.validator.addMethod('userName', function (value, element, params) {
     if(!RegExp(params['pattern']).test(value))
         return false;
 
-    if(value < params['minLength'] || value > params['maxLength'])
+    const length = value.length;
+    if(length < params['minLength'] || length > params['maxLength'])
         return false;
 
     return true;
