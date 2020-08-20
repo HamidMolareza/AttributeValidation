@@ -19,17 +19,18 @@ namespace ModelsValidation.Utility {
             .TryOnSuccess (parsedPhone =>
                 string.Concat ("+", parsedPhone.CountryCode, parsedPhone.NationalNumber));
 
-        public static MethodResult<string> PhoneMustValid (this string @this) =>
+        public static MethodResult<string> PhoneMustValid (this string @this,
+                string pattern = @"^[+0-9][0-9]+$", int minLength = 5, int maxLength = 30) =>
             @this.IsNotNull<string> ()
             .TryOnSuccess (phoneNumber =>
                 TryExtensions.Try (() =>
-                    phoneNumber.MustMatchRegex (new Regex (@"^[+0-9][0-9]+$"),
+                    phoneNumber.MustMatchRegex (new Regex (pattern),
                         new ErrorDetail (StatusCodes.Status400BadRequest,
-                            message: "{0} is not valid.")))
+                            message: "{0} pattern is not valid.")))
                 .OnSuccess (() => GetParsedPhoneNumber (phoneNumber))
                 .OnFail (new ErrorDetail (StatusCodes.Status400BadRequest, message: "{0} is not valid."))
                 .OnSuccess (() => phoneNumber.Must (
-                    phoneNumber.Length >= 5 && phoneNumber.Length <= 30,
+                    phoneNumber.Length >= minLength && phoneNumber.Length <= maxLength,
                     new ErrorDetail (StatusCodes.Status400BadRequest,
                         "{0} is not valid.", "The {0} length is not valid.")))
             ).OnFail (new { Phone = @this });

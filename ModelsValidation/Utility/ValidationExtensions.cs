@@ -8,9 +8,9 @@ using Microsoft.AspNetCore.Http;
 namespace ModelsValidation.Utility {
     public static class ValidationExtensions {
         public static MethodResult<string> UserNameMustValid (
-                this string @this, int minimumLength, int maximumLength, string? regex = null) =>
+                this string @this, int minimumLength, int maximumLength, string regex = @"^[a-zA-Z_][a-zA-Z0-9_]*$") =>
             @this.IsNotNull<string> ()
-            .OnSuccess (username => username.MustMatchRegex (new Regex (regex?? @"^[a-zA-Z_][a-zA-Z0-9_]*$"),
+            .OnSuccess (username => username.MustMatchRegex (new Regex (regex),
                 new ErrorDetail (StatusCodes.Status400BadRequest,
                     message: "{0} Format is not valid.")))
             .OnSuccess (username =>

@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using FunctionalUtility.Extensions;
 using FunctionalUtility.ResultUtility;
@@ -49,5 +50,14 @@ namespace ModelsValidation.Utility {
             .OnFail (result => result.Fail (
                 new AttributeValidationError (message: errorMessage ?? result.Detail.Message)))
             .MapToValidationResult (format);
+
+        public static bool MergeAttribute (IDictionary<string, string> attributes, string key, string value) {
+            if (attributes.ContainsKey (key)) {
+                return false;
+            }
+
+            attributes.Add (key, value);
+            return true;
+        }
     }
 }
