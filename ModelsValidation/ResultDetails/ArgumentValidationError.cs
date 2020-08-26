@@ -22,9 +22,12 @@ namespace ModelsValidation.ResultDetails {
         public override object GetViewModel () =>
             ShowDefaultMessageToUser?(object) new {
                 StatusCode,
-                Title = nameof (ArgumentValidationError),
-                Message = "One or more validation failed."
+                Title = GetViewTitle (),
+                Message = GetViewMessage ()
             }:
             new { StatusCode, Title, Message, Errors };
+
+        public override string GetViewTitle () => nameof (ArgumentValidationError);
+        public override string GetViewMessage () => "One or more validation failed.";
     }
 }
