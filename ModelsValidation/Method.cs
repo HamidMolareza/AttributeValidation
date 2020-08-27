@@ -7,6 +7,7 @@ using System.Runtime.CompilerServices;
 using FunctionalUtility.Extensions;
 using FunctionalUtility.ResultDetails.Errors;
 using FunctionalUtility.ResultUtility;
+using ModelsValidation.ResultDetails;
 
 namespace ModelsValidation {
     public static class Method {
@@ -72,23 +73,31 @@ namespace ModelsValidation {
                     moreDetails : new { parameters, values }));
 
         private static MethodResult MethodParametersMustValid (
-                IReadOnlyCollection<ParameterInfo> parameters,
-                IReadOnlyCollection<object?> ? values,
-                bool showDefaultMessageToUser,
-                int maximumDepth
-            ) => MapParametersAndValues (parameters, values)
-            .OnSuccess (parametersWithValues =>
-                (validationContext: new ValidationContext (values), parametersWithValues))
-            .OnSuccess (result =>
-                result.parametersWithValues.ForEachUntilIsSuccess (parameterWithValue =>
-                    Models.ModelMustValid (
-                        parameterWithValue.Key.GetCustomAttributesData ().ToList (),
-                        parameterWithValue.Key.Name,
-                        parameterWithValue.Value, result.validationContext,
-                        showDefaultMessageToUser,
-                        SettingClass.BeginDepth, maximumDepth)
-                )
-            );
+            IReadOnlyCollection<ParameterInfo> parameters, IReadOnlyCollection<object?> ? values,
+            bool showDefaultMessageToUser, int maximumDepth) {
+            var methodResult = MapParametersAndValues (parameters, values);
+            if (!methodResult.IsSuccess)
+                return MethodResult.Fail (methodResult.Detail);
+
+            var validationContext = new ValidationContext (values);
+            var modelErrors = new List<KeyValuePair<string, string>> ();
+            foreach (var (parameter, value) in methodResult.Value) {
+                var validationResult = Models.ModelMustValid (
+                    parameter.GetCustomAttributesData ().ToList (),
+                    parameter.Name,
+                    value, validationContext,
+                    showDefaultMessageToUser,
+                    SettingClass.BeginDepth, maximumDepth);
+                if (validationResult.IsSuccess) continue;
+
+                if (validationResult.Detail.GetType () != typeof (ArgumentValidationError))
+                    return validationResult;
+                var errors = (validationResult.Detail as ArgumentValidationError) !.ModelErrors;
+                modelErrors.AddRange (errors);
+            }
+
+            return modelErrors.Any () ? MethodResult.Fail (new ArgumentValidationError (modelErrors)) : MethodResult.Ok ();
+        }
 
         private static MethodResult<List<KeyValuePair<ParameterInfo, object?>>> MapParametersAndValues (
             IReadOnlyCollection<ParameterInfo> parameters, IReadOnlyCollection<object?> ? values) {

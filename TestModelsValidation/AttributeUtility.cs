@@ -12,9 +12,10 @@ namespace TestModelsValidation {
             Assert.False (result.IsSuccess);
             Assert.True (result.Detail is ArgumentValidationError);
 
-            var errors = ((ArgumentValidationError) result.Detail).Errors;
+            var errors = ((ArgumentValidationError) result.Detail).ModelErrors;
             Assert.Single (errors);
-            Assert.Equal ("agreement is required.", errors[0]);
+            Assert.Equal ("agreement", errors[0].Key);
+            Assert.Equal ("agreement is required.", errors[0].Value);
         }
 
         [Fact]
@@ -24,9 +25,10 @@ namespace TestModelsValidation {
             Assert.False (result.IsSuccess);
             Assert.True (result.Detail is ArgumentValidationError);
 
-            var errors = ((ArgumentValidationError) result.Detail).Errors;
+            var errors = ((ArgumentValidationError) result.Detail).ModelErrors;
             Assert.Single (errors);
-            Assert.Equal ("(fake - Type of (System.String)) is not System.Boolean", errors[0]);
+            Assert.Equal ("agreement", errors[0].Key);
+            Assert.Equal ("(fake - Type of (System.String)) is not System.Boolean", errors[0].Value);
         }
 
         [Fact]
@@ -43,9 +45,10 @@ namespace TestModelsValidation {
             Assert.False (result.IsSuccess);
             Assert.True (result.Detail is ArgumentValidationError);
 
-            var errors = ((ArgumentValidationError) result.Detail).Errors;
+            var errors = ((ArgumentValidationError) result.Detail).ModelErrors;
             Assert.Single (errors);
-            Assert.Equal ("agreement is required.", errors[0]);
+            Assert.Equal ("agreement", errors[0].Key);
+            Assert.Equal ("agreement is required.", errors[0].Value);
         }
 
         [Fact]
@@ -55,9 +58,10 @@ namespace TestModelsValidation {
             Assert.False (result.IsSuccess);
             Assert.True (result.Detail is ArgumentValidationError);
 
-            var errors = ((ArgumentValidationError) result.Detail).Errors;
+            var errors = ((ArgumentValidationError) result.Detail).ModelErrors;
             Assert.Single (errors);
-            Assert.Equal ("email is not valid.", errors[0]);
+            Assert.Equal ("email", errors[0].Key);
+            Assert.Equal ("email is not valid.", errors[0].Value);
         }
 
         [Fact]
@@ -74,9 +78,10 @@ namespace TestModelsValidation {
             Assert.False (result.IsSuccess);
             Assert.True (result.Detail is ArgumentValidationError);
 
-            var errors = ((ArgumentValidationError) result.Detail).Errors;
+            var errors = ((ArgumentValidationError) result.Detail).ModelErrors;
             Assert.Single (errors);
-            Assert.Equal ("email is not valid.", errors[0]);
+            Assert.Equal ("email", errors[0].Key);
+            Assert.Equal ("email is not valid.", errors[0].Value);
         }
 
         [Fact]
@@ -86,9 +91,10 @@ namespace TestModelsValidation {
             Assert.False (result.IsSuccess);
             Assert.True (result.Detail is ArgumentValidationError);
 
-            var errors = ((ArgumentValidationError) result.Detail).Errors;
+            var errors = ((ArgumentValidationError) result.Detail).ModelErrors;
             Assert.Single (errors);
-            Assert.Equal ("The length must be between 10 and 90.", errors[0]);
+            Assert.Equal ("email", errors[0].Key);
+            Assert.Equal ("The length must be between 10 and 90.", errors[0].Value);
         }
 
         [Fact]
@@ -98,9 +104,10 @@ namespace TestModelsValidation {
             Assert.False (result.IsSuccess);
             Assert.True (result.Detail is ArgumentValidationError);
 
-            var errors = ((ArgumentValidationError) result.Detail).Errors;
+            var errors = ((ArgumentValidationError) result.Detail).ModelErrors;
             Assert.Single (errors);
-            Assert.Equal ("(System.Collections.Generic.List`1[System.String] - Type of (System.Collections.Generic.List`1[System.String])) is not System.Int32", errors[0]);
+            Assert.Equal ("nonNegativeInteger", errors[0].Key);
+            Assert.Equal ("(System.Collections.Generic.List`1[System.String] - Type of (System.Collections.Generic.List`1[System.String])) is not System.Int32", errors[0].Value);
         }
 
         [Fact]
@@ -117,9 +124,10 @@ namespace TestModelsValidation {
             Assert.False (result.IsSuccess);
             Assert.True (result.Detail is ArgumentValidationError);
 
-            var errors = ((ArgumentValidationError) result.Detail).Errors;
+            var errors = ((ArgumentValidationError) result.Detail).ModelErrors;
             Assert.Single (errors);
-            Assert.Equal ("nonNegativeInteger must equal or more than 0.", errors[0]);
+            Assert.Equal ("nonNegativeInteger", errors[0].Key);
+            Assert.Equal ("nonNegativeInteger must equal or more than 0.", errors[0].Value);
         }
 
         [Fact]
@@ -129,9 +137,10 @@ namespace TestModelsValidation {
             Assert.False (result.IsSuccess);
             Assert.True (result.Detail is ArgumentValidationError);
 
-            var errors = ((ArgumentValidationError) result.Detail).Errors;
+            var errors = ((ArgumentValidationError) result.Detail).ModelErrors;
             Assert.Single (errors);
-            Assert.Equal ("phoneNumber is not valid.", errors[0]);
+            Assert.Equal ("phoneNumber", errors[0].Key);
+            Assert.Equal ("phoneNumber is not valid.", errors[0].Value);
         }
 
         [Theory]
@@ -156,9 +165,10 @@ namespace TestModelsValidation {
             Assert.False (result.IsSuccess);
             Assert.True (result.Detail is ArgumentValidationError);
 
-            var errors = ((ArgumentValidationError) result.Detail).Errors;
+            var errors = ((ArgumentValidationError) result.Detail).ModelErrors;
             Assert.Single (errors);
-            Assert.Equal ("phoneNumber is not valid.", errors[0]);
+            Assert.Equal ("phoneNumber", errors[0].Key);
+            Assert.Equal ("phoneNumber is not valid.", errors[0].Value);
         }
 
         [Fact]
@@ -168,9 +178,10 @@ namespace TestModelsValidation {
             Assert.False (result.IsSuccess);
             Assert.True (result.Detail is ArgumentValidationError);
 
-            var errors = ((ArgumentValidationError) result.Detail).Errors;
+            var errors = ((ArgumentValidationError) result.Detail).ModelErrors;
             Assert.Single (errors);
-            Assert.Equal ("The phoneNumber length is not valid.", errors[0]);
+            Assert.Equal ("phoneNumber", errors[0].Key);
+            Assert.Equal ("The phoneNumber length is not valid.", errors[0].Value);
         }
 
         [Fact]
@@ -180,9 +191,10 @@ namespace TestModelsValidation {
             Assert.False (result.IsSuccess);
             Assert.True (result.Detail is ArgumentValidationError);
 
-            var errors = ((ArgumentValidationError) result.Detail).Errors;
+            var errors = ((ArgumentValidationError) result.Detail).ModelErrors;
             Assert.Single (errors);
-            Assert.Equal ("(System.Collections.Generic.List`1[System.String] - Type of (System.Collections.Generic.List`1[System.String])) is not System.Int32", errors[0]);
+            Assert.Equal ("positiveInteger", errors[0].Key);
+            Assert.Equal ("(System.Collections.Generic.List`1[System.String] - Type of (System.Collections.Generic.List`1[System.String])) is not System.Int32", errors[0].Value);
         }
 
         [Fact]
@@ -199,12 +211,11 @@ namespace TestModelsValidation {
             Assert.False (result.IsSuccess);
             Assert.True (result.Detail is ArgumentValidationError);
 
-            var errors = ((ArgumentValidationError) result.Detail).Errors;
+            var errors = ((ArgumentValidationError) result.Detail).ModelErrors;
             Assert.Single (errors);
-            Assert.Equal ("positiveInteger must more than 0.", errors[0]);
+            Assert.Equal ("positiveInteger", errors[0].Key);
+            Assert.Equal ("positiveInteger must more than 0.", errors[0].Value);
         }
-
-        //TODO: =====
 
         [Fact]
         public void AttributeValidation_UserNameAttributeOnInvalidType_Error () {
@@ -213,9 +224,10 @@ namespace TestModelsValidation {
             Assert.False (result.IsSuccess);
             Assert.True (result.Detail is ArgumentValidationError);
 
-            var errors = ((ArgumentValidationError) result.Detail).Errors;
+            var errors = ((ArgumentValidationError) result.Detail).ModelErrors;
             Assert.Single (errors);
-            Assert.Equal ("(System.Collections.Generic.List`1[System.String] - Type of (System.Collections.Generic.List`1[System.String])) is not System.String", errors[0]);
+            Assert.Equal ("username", errors[0].Key);
+            Assert.Equal ("(System.Collections.Generic.List`1[System.String] - Type of (System.Collections.Generic.List`1[System.String])) is not System.String", errors[0].Value);
         }
 
         [Fact]
@@ -232,9 +244,10 @@ namespace TestModelsValidation {
             Assert.False (result.IsSuccess);
             Assert.True (result.Detail is ArgumentValidationError);
 
-            var errors = ((ArgumentValidationError) result.Detail).Errors;
+            var errors = ((ArgumentValidationError) result.Detail).ModelErrors;
             Assert.Single (errors);
-            Assert.Equal ("username Format is not valid.", errors[0]);
+            Assert.Equal ("username", errors[0].Key);
+            Assert.Equal ("username Format is not valid.", errors[0].Value);
         }
 
         [Fact]
@@ -244,9 +257,10 @@ namespace TestModelsValidation {
             Assert.False (result.IsSuccess);
             Assert.True (result.Detail is ArgumentValidationError);
 
-            var errors = ((ArgumentValidationError) result.Detail).Errors;
+            var errors = ((ArgumentValidationError) result.Detail).ModelErrors;
             Assert.Single (errors);
-            Assert.Equal ("The length must be between 5 and 35.", errors[0]);
+            Assert.Equal ("username", errors[0].Key);
+            Assert.Equal ("The length must be between 5 and 35.", errors[0].Value);
         }
     }
 }

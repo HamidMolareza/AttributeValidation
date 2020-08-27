@@ -2,7 +2,7 @@
 
   <PropertyGroup>
   <PackageId>ModelsValidation</PackageId>
-  <Version>1.2.6</Version>
+  <Version>1.2.7</Version>
   <PackageTags>Validation; Attribute; Model; Validate; Functional</PackageTags>
   <Authors>Hamid Molareza</Authors>
   <RepositoryUrl>https://github.com/HamidMolareza/ModelsValidation</RepositoryUrl>
@@ -19,6 +19,7 @@
     </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="FileSignatureUtility" Version="1.0.3" />
     <PackageReference Include="FunctionalUtility" Version="1.1.6" />
     <PackageReference Include="libphonenumber-csharp" Version="8.12.7" />
   </ItemGroup>

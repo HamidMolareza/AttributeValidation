@@ -2,8 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using FunctionalUtility.Extensions;
+using FunctionalUtility.ResultDetails.Errors;
 using FunctionalUtility.ResultUtility;
-using ModelsValidation.ResultDetails;
 
 namespace ModelsValidation.Utility {
     public static class AttributeUtility {
@@ -28,7 +28,7 @@ namespace ModelsValidation.Utility {
             ValidationResult.Success :
             value!.As<T> ()
             .OnSuccessFailWhen (predicate,
-                new AttributeValidationError (message: errorMessage ?? "{0} is not valid."))
+                new BadRequestError (message: errorMessage ?? "{0} is not valid."))
             .MapToValidationResult (format);
 
         public static ValidationResult AttributeValidation<T> (
@@ -38,7 +38,7 @@ namespace ModelsValidation.Utility {
             value!.As<T> ()
             .OnSuccess (predicate)
             .OnFail (result => result.Fail (
-                new AttributeValidationError (message: errorMessage ?? result.Detail.Message)))
+                new BadRequestError (message: errorMessage ?? result.Detail.Message)))
             .MapToValidationResult (format);
 
         public static ValidationResult AttributeValidation<T> (
@@ -48,7 +48,7 @@ namespace ModelsValidation.Utility {
             value!.As<T> ()
             .OnSuccess (predicate)
             .OnFail (result => result.Fail (
-                new AttributeValidationError (message: errorMessage ?? result.Detail.Message)))
+                new BadRequestError (message: errorMessage ?? result.Detail.Message)))
             .MapToValidationResult (format);
 
         public static bool MergeAttribute (IDictionary<string, string> attributes, string key, string value) {

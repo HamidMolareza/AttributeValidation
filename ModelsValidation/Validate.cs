@@ -50,7 +50,8 @@ namespace ModelsValidation {
                                         new BadRequestError (message: $"Type of error message is not expected.. Type of class object: {classObject.GetType()}.",
                                             moreDetails : new { errorMessage, validationResult, attributeType, parameterName }));
                                 return MethodResult.Fail (new ArgumentValidationError (
-                                    new List<string> { errorResult }, showDefaultMessageToUser : showDefaultMessageToUser));
+                                    new KeyValuePair<string, string> (parameterName, errorResult),
+                                    showDefaultMessageToUser : showDefaultMessageToUser));
                             }
                         }
 
@@ -60,7 +61,8 @@ namespace ModelsValidation {
                     {
                         if (!string.IsNullOrEmpty (result.ErrorMessage))
                             return MethodResult.Fail (new ArgumentValidationError (
-                                new List<string> { result.ErrorMessage }, showDefaultMessageToUser : showDefaultMessageToUser));
+                                new KeyValuePair<string, string> (parameterName, result.ErrorMessage),
+                                showDefaultMessageToUser : showDefaultMessageToUser));
                         break;
                     }
                 default:
